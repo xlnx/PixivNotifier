@@ -41,7 +41,17 @@ class Pixiv():
 			'return_to': self.return_to,
 			'post_key': post_key
 		}
-		se.post(self.login_url, data = data, headers = self.headers)
+		resp_text = se.post(self.login_url, data = data, headers = self.headers).text
+		resp = json.loads(resp_text, "utf-8")
+		if 'success' not in resp['body']:
+			for x in resp['body']['validation_errors']:
+				return [x, resp['body']['validation_errors'][x]]
+			# return resp['body']['validation_errors']
+		else:
+			key_soup = BeautifulSoup(self.get_html(self.return_to, 3).text, 'lxml')
+			post_key = key_soup.find('input', attrs = {'name': 'tt'})['value']
+			self.notify_msg = self.notify_suffix + post_key
+			return None
 
 	def get_proxy(self):
 		html = requests.get('http://haoip.cc/tiqu.htm')
@@ -86,22 +96,10 @@ class Pixiv():
 					return self.get_html(url, timeout)
 
 	def check_msg(self):
-		key_soup = BeautifulSoup(self.get_html(self.return_to, 3).text, 'lxml')
-		for x in key_soup.find_all('a', href = self.notify_url):
-			span = BeautifulSoup(str(x), 'lxml').find('span')
-			if (span != None):
-				if int(span.string) > 0:
-					print 'New msg: ' + span.string
-					# return '{"items":[{"id":24326867,"user_id":10949667,"notified_at":"Thu, 17 Aug 2017 12:07:23 +0900","type":"nice","unread":true,"details":{"target":{"id":64422822,"type":"illust","title":"Heartbroken Koishi","url":"https://i.pximg.net/c/128x128/img-master/img/2017/08/15/04/09/26/64422822_p0_square1200.jpg"},"count":9}},{"id":317000650,"user_id":10949667,"notified_at":"Thu, 17 Aug 2017 12:07:23 +0900","type":"bookmarked","unread":true,"details":{"target":{"id":64422822,"type":"illust","title":"Heartbroken Koishi","url":"https://i.pximg.net/c/128x128/img-master/img/2017/08/15/04/09/26/64422822_p0_square1200.jpg"},"count":8,"content":{"bookmark_count":8}}},{"id":317490967,"user_id":10949667,"notified_at":"Thu, 17 Aug 2017 10:40:34 +0900","type":"bookmarked","unread":true,"details":{"target":{"id":64461432,"type":"illust","title":"Subterranean Rose","url":"https://i.pximg.net/c/128x128/img-master/img/2017/08/17/02/58/16/64461432_p0_square1200.jpg"},"count":1,"content":{"bookmark_count":1}}},{"id":24778695,"user_id":10949667,"notified_at":"Thu, 17 Aug 2017 10:40:34 +0900","type":"nice","unread":true,"details":{"target":{"id":64461432,"type":"illust","title":"Subterranean Rose","url":"https://i.pximg.net/c/128x128/img-master/img/2017/08/17/02/58/16/64461432_p0_square1200.jpg"},"count":2}},{"id":317393171,"user_id":10949667,"notified_at":"Wed, 16 Aug 2017 23:33:27 +0900","type":"bookmarked","unread":false,"details":{"target":{"id":64157922,"type":"illust","title":"こいし~","url":"https://i.pximg.net/c/128x128/img-master/img/2017/08/01/01/25/26/64157922_p0_square1200.jpg"},"count":6,"content":{"bookmark_count":6}}}],"remaining_unread_count":0}'
-					post_key = key_soup.find('input', attrs = {'name': 'tt'})['value']
-					notify_msg = self.notify_suffix + post_key
-					response = se.post(self.notify_work_url, 
-						headers = self.notify_headers,
-						data = notify_msg)
-					return response.text
-				else:
-					print 'No msg'
-					return False
+		response = se.post(self.notify_work_url, 
+			headers = self.notify_headers,
+			data = self.notify_msg)
+		return response.text
 
 pixiv = Pixiv()
 
