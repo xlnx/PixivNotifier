@@ -16,7 +16,7 @@ class Pixiv():
 		self.login_url = 'https://accounts.pixiv.net/api/login?lang=zh'
 		self.notify_url = '/notify_all.php'
 		self.notify_work_url = 'https://www.pixiv.net/rpc/notify.php'
-		self.return_to = 'http://www.pixiv.net/'
+		self.return_to = 'http://www.pixiv.net'
 		
 		self.headers = {
 			'Referer': 'https://accounts.pixiv.net/login?lang=zh&source=pc&view_type=page&ref=wwwtop_accounts_index',
@@ -31,7 +31,6 @@ class Pixiv():
 			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
 		}
 		self.notify_suffix = 'op=notify&tt='
-		self.ip_list = []
 
 	def login(self, id, pswd):
 		post_key = BeautifulSoup(se.get(self.base_url, headers = self.headers).text, 'lxml').find('input')['value']
@@ -48,9 +47,14 @@ class Pixiv():
 				return [x, resp['body']['validation_errors'][x]]
 			# return resp['body']['validation_errors']
 		else:
-			key_soup = BeautifulSoup(self.get_html(self.return_to, 3).text, 'lxml')
-			post_key = key_soup.find('input', attrs = {'name': 'tt'})['value']
+			self.main_page_html = self.get_html(self.return_to, 3).text
+			self.main_page = BeautifulSoup(self.main_page_html, 'lxml')
+			post_key = self.main_page.find('input', attrs = {'name': 'tt'})['value']
 			self.notify_msg = self.notify_suffix + post_key
+			self.user_page_php = self.main_page.find('a', 
+				attrs = {'class': 'user-name js-click-trackable-later'})['href']
+			self.user_id = re.findall(r'\?id=(.+)', self.user_page_php)[0]
+			self.user_page_php = self.return_to + self.user_page_php
 			return None
 
 	def get_proxy(self):
@@ -99,12 +103,15 @@ class Pixiv():
 		response = se.post(self.notify_work_url, 
 			headers = self.notify_headers,
 			data = self.notify_msg)
+		# print response.text
 		return response.text
 
 pixiv = Pixiv()
 
-def login(id, pw):
-	return pixiv.login(id, pw)
-
-def check_msg():
-	return pixiv.check_msg()
+if __name__ == "__main__":
+	import cache
+	dat = cache.config.read(('pixiv_id', 'password'))
+	# import testform
+	pixiv.login(dat['pixiv_id'], dat['password'])
+	# testform.CheckMessageThread().start()
+	print pixiv.check_msg()

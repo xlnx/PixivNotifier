@@ -4,6 +4,7 @@ from PyQt4 import QtCore, QtGui, uic
 import json
 import time
 import frameMsg
+# import Message
 
 frameMsgListUI, QtBaseClass = uic.loadUiType("frameMsgList.ui")
 
@@ -36,3 +37,10 @@ class MessageList(QtGui.QFrame, frameMsgListUI):
 				self.msgList[i].geometry().width(),
 				self.msgList[i].geometry().height()
 			)
+
+if __name__ == "__main__":
+	app = QtGui.QApplication(sys.argv)
+	a = MessageList()
+	a.show()
+	a.push_back("asdasd", "sadasd", "sadasd")
+	sys.exit(app.exec_())

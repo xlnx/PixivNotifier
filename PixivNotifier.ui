@@ -104,9 +104,6 @@ font: 9pt &quot;微软雅黑&quot;;</string>
     <zorder>pnlMain</zorder>
    </widget>
    <widget class="QFrame" name="pnlMain">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -133,10 +130,91 @@ font: 9pt &quot;微软雅黑&quot;;</string>
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <zorder>pnlLogin</zorder>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>112</y>
+       <width>300</width>
+       <height>340</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QTabWidget::pane{
+	border:none;
+}
+QTabWidget::tab-bar{
+        alignment:left;
+}
+QTabBar::tab{
+	background:transparent;
+	color:white;
+	min-width:25ex;
+	min-height:40px;
+}
+QTabBar::tab:hover{
+	background:rgb(255, 255, 255, 100);
+}
+QTabBar::tab:selected{
+	border-color: white;
+	background:white;
+	color:green;
+}</string>
+     </property>
+     <property name="currentIndex">
+      <number>2</number>
+     </property>
+     <widget class="QWidget" name="tbMain">
+      <attribute name="title">
+       <string/>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="tbLoved">
+      <attribute name="title">
+       <string/>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="tbCreator">
+      <attribute name="title">
+       <string/>
+      </attribute>
+      <widget class="QScrollBar" name="vsclBar">
+       <property name="geometry">
+        <rect>
+         <x>280</x>
+         <y>0</y>
+         <width>16</width>
+         <height>300</height>
+        </rect>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tbMessage">
+      <attribute name="title">
+       <string/>
+      </attribute>
+     </widget>
+    </widget>
+    <widget class="QLabel" name="userAvatar">
+     <property name="geometry">
+      <rect>
+       <x>8</x>
+       <y>8</y>
+       <width>96</width>
+       <height>96</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border-radius: 48px;</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
    </widget>
-   <zorder>pnlMain</zorder>
-   <zorder>pnlLogin</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

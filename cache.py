@@ -11,30 +11,51 @@ def getFileDir(file):
 	return os.path.split(file)[0]
 
 class imgCache:
-	def __init__(self):
-		self.setCacheDir('imgCache/')
+	def __init__(self, d = 'imgCache/'):
+		self.setCacheDir(d)
 
 	def setCacheDir(self, dir):
 		self.cacheDir = dir
 		if not os.path.isdir(dir):
 			os.mkdir(dir)
 
-	def downloadImg(self, url, fileName):
-		ir = requests.get(url)
+	def downloadImg(self, url, fileName, headers = {}):
+		ir = requests.get(url, headers = headers)
 		if ir.status_code == 200:
 			open(fileName, 'wb').write(ir.content)
 
-	def get(self, url):
-		fname = self.cacheDir + hex(hash(url)) + getFileExt(url)
+	def find(self, url = "", name = None):
+		if name == None:
+			fname = self.cacheDir + hex(abs(hash(url))) + getFileExt(url)
+		else:
+			fname = self.cacheDir + name + getFileExt(url)
+		if os.path.isfile(fname):
+			return fname
+		return None
+
+	def get(self, url, name = None, headers = {}):
+		if name == None:
+			fname = self.cacheDir + hex(abs(hash(url))) + getFileExt(url)
+		else:
+			fname = self.cacheDir + name + getFileExt(url)
 		if not os.path.isfile(fname):
-			self.downloadImg(url, fname)
+			self.downloadImg(url, fname, headers)
+		return fname
+
+	def update(self, url, name = None, headers = {}):
+		if name == None:
+			fname = self.cacheDir + hex(abs(hash(url))) + getFileExt(url)
+		else:
+			fname = self.cacheDir + name + getFileExt(url)
+		# if not os.path.isfile(fname):
+		self.downloadImg(url, fname, headers)
 		return fname
 
 image = imgCache()
 
 class dataCache:
-	def __init__(self):
-		self.setFileName("userData/config.json")
+	def __init__(self, d = 'userData/config.json'):
+		self.setFileName(d)
 
 	def setFileName(self, s):
 		self.fileName = s

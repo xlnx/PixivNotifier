@@ -1,33 +1,24 @@
-import sys
-from PyQt4 import QtGui, QtCore
-import msgList
+import threading
+import time
 
-class Main(QtGui.QMainWindow):
-	def __init__(self):
-		QtGui.QMainWindow.__init__(self)
-		self.setGeometry(600, 300, 400, 400)
-		b = QtGui.QPushButton(self)
-		self.connect(b, QtCore.SIGNAL("clicked()"), self.a)
-		b.setGeometry(
-			0, 300, 100, 50
-		)
-		b.show()
-		b = QtGui.QPushButton(self)
-		self.connect(b, QtCore.SIGNAL("clicked()"), self.b)
-		b.setGeometry(
-			200, 300, 100, 50
-		)
-		b.show()
-		self.msgs = msgList.MessageList(self)
-		self.msgs.push_back("sadads")
+class CheckMessageThread(threading.Thread):
+	def __init__(self, parent = None):
+		threading.Thread.__init__(self)
+		self.msgQueue = []
+	def run(self):
+		while True:
+			x = self.msgQueue[0]
+			self.msgQueue.
+			print self.x
+			time.sleep(1)
+	def change(self, x):
+		self.x = x
 
-	def a(self):
-		self.msgs.push_back("asdasd")
-
-	def b(self):
-		self.msgs.erase(0)
-
-app = QtGui.QApplication(sys.argv)
-form = Main()
-form.show()
-sys.exit(app.exec_())
+thread = CheckMessageThread()
+thread.start()
+i = 0
+while (1):
+	print '===='
+	i = i + 1
+	thread.x = i
+	time.sleep(2)
