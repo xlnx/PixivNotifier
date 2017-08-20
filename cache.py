@@ -63,25 +63,35 @@ class dataCache:
 		if not os.path.isdir(d):
 			os.mkdir(d)
 	
-	def read(self, list):
+	def read(self, list, section = None):
 		result = {}
 		if os.path.isfile(self.fileName):
 			f = open(self.fileName, 'r')
 			data = json.load(f)
 			for x in list:
-				if x in data:
-					result[x] = data[x]
+				if section is None:
+					if x in data:
+						result[x] = data[x]
+				else:
+					if section in data and x in data[section]:
+						result[x] = data[section][x]
 			f.close()
 		return result 
 
-	def write(self, map):
+	def write(self, map, section = None):
 		data = {}
 		if os.path.isfile(self.fileName):
 			f = open(self.fileName, 'r')
 			data = json.load(f)
 			f.close
-		for x in map:
-			data[x] = map[x]
+		if section is None:
+			for x in map:
+				data[x] = map[x]
+		else:
+			if not section in data:
+				data[section] = {}
+			for x in map:
+				data[section][x] = map[x]
 		f = open(self.fileName, 'w')
 		json.dump(data, f)
 		f.close()

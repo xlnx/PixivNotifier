@@ -41,70 +41,83 @@ class Pixiv():
 			'post_key': post_key
 		}
 		resp_text = se.post(self.login_url, data = data, headers = self.headers).text
-		resp = json.loads(resp_text, "utf-8")
+		resp = json.loads(resp_text, 'utf-8')
 		if 'success' not in resp['body']:
 			for x in resp['body']['validation_errors']:
 				return [x, resp['body']['validation_errors'][x]]
 			# return resp['body']['validation_errors']
 		else:
-			self.main_page_html = self.get_html(self.return_to, 3).text
-			self.main_page = BeautifulSoup(self.main_page_html, 'lxml')
-			post_key = self.main_page.find('input', attrs = {'name': 'tt'})['value']
-			self.notify_msg = self.notify_suffix + post_key
-			self.user_page_php = self.main_page.find('a', 
+			self.pid = id
+			self.pswd = pswd
+
+			cookies = requests.utils.dict_from_cookiejar(se.cookies)
+			cookies['login_ever'] = 'yes'
+			cookies['user_language'] = 'zh'
+			cookies['__utmc'] = '235335808'
+			cookies['__utma'] = '235335808.186197117.1487139067.1503166340.1503195157.86'
+			cookies['__utmb'] = '235335808.512.9.1503200678674'
+			cookies['__utmz'] = '235335808.1502737260.45.7.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided)'
+			se.cookies = requests.utils.cookiejar_from_dict(cookies, cookiejar = None, overwrite = True)
+			
+			main_page_html = se.get(self.return_to, timeout = 3).text
+			main_page = BeautifulSoup(main_page_html, 'lxml')
+
+			self.post_key = main_page.find('input', attrs = {'name': 'tt'})['value']
+			self.notify_msg = self.notify_suffix + self.post_key
+			
+			self.user_page_php = main_page.find('a', 
 				attrs = {'class': 'user-name js-click-trackable-later'})['href']
 			self.user_id = re.findall(r'\?id=(.+)', self.user_page_php)[0]
 			self.user_page_php = self.return_to + self.user_page_php
 			return None
-
-	def get_proxy(self):
-		html = requests.get('http://haoip.cc/tiqu.htm')
-		ip_list_temp = re.findall(r'r/>(.*?)<b', html.text, re.S)
-		for ip in ip_list_temp:
-			i = re.sub('\n', '', ip)
-			self.ip_list.append(i.strip())
-			print(i.strip())
-
-	''' 会被反爬,改成使用代理
-		def get_tml(self, url):
-			response = se.get(url, headers=self.headers)
-			return response
-	'''
-	def get_html(self, url, timeout, proxy = None, num_entries = 5):
-		if proxy is None:
-			try:
-				return se.get(url, headers = self.headers, timeout = timeout)
-			except:
-				if num_entries > 0:
-					print('获取网页出错,5秒后将会重新获取倒数第', num_entries, '次')
-					time.sleep(5)
-					return self.get_html(url, timeout, num_entries = num_entries - 1)
-				else:
-					print('开始使用代理')
-					time.sleep(5)
-					ip = ''.join(str(random.choice(self.ip_list))).strip()
-					now_proxy = {'http': ip}
-					return self.get_html(url, timeout, proxy = now_proxy)
-		else:
-			try:
-				return se.get(url, headers = self.headers, proxies = proxy, timeout = timeout)
-			except:
-				if num_entries > 0:
-					print('正在更换代理,5秒后将会重新获取第', num_entries, '次')
-					time.sleep(5)
-					ip = ''.join(str(random.choice(self.ip_list))).strip()
-					now_proxy = {'http': ip}
-					return self.get_html(url, timeout, proxy = now_proxy, num_entries = num_entries - 1)
-				else:
-					print('使用代理失败,取消使用代理')
-					return self.get_html(url, timeout)
+	
+	def getServer(self):
+		ss = requests.session()
+		ss.cookies = se.cookies
+		return ss
+		# ss = requests.session()
+		# post_key = BeautifulSoup(ss.get(self.base_url, headers = self.headers).text, 'lxml').find('input')['value']
+		# data = {
+		# 	'pixiv_id': self.pid,
+		# 	'password': self.pswd,
+		# 	'return_to': self.return_to,
+		# 	'post_key': post_key
+		# }
+		# resp_text = ss.post(self.login_url, data = data, headers = self.headers).text
+		# resp = json.loads(resp_text, "utf-8")
+		# if 'success' in resp['body']:
+		# 	return ss
+		# else:
+		# 	return None
 
 	def check_msg(self):
-		response = se.post(self.notify_work_url, 
+		cookies = requests.utils.dict_from_cookiejar(se.cookies)
+		l = re.findall(r'([^\.]+)', cookies['__utmb'])
+		cookies['__utmb'] = l[0] + '.' + str(int(l[1]) + 1) + '.' + l[2] + '.' + l[3] 
+		se.cookies = requests.utils.cookiejar_from_dict(cookies, cookiejar = None, overwrite = True)
+		ss = se#self.getServer()
+		# print requests.utils.dict_from_cookiejar(ss.cookies)
+		# main_page_html = ss.get(self.return_to, timeout = 3).text
+		# print main_page_html
+		# main_page = BeautifulSoup(main_page_html, 'lxml')
+		# post_key = main_page.find('input', attrs = {'name': 'tt'})['value']
+		# notify_msg = self.notify_suffix + post_key
+		# print requests.utils.dict_from_cookiejar(ss.cookies)
+		response = ss.post(self.notify_work_url, 
 			headers = self.notify_headers,
-			data = self.notify_msg)
+			data = self.notify_msg
+		)
+		# print requests.utils.dict_from_cookiejar(ss.cookies)
+		# print post_key
 		# print response.text
 		return response.text
+
+def create_header(url):
+	return {
+		'Referer': url,
+		'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) '
+				'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
+	}
 
 pixiv = Pixiv()
 

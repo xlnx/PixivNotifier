@@ -19,7 +19,9 @@ class Message(QtGui.QWidget, MsgUI):
 		if time is not None:
 			self.time.setText(str(time))
 		if icon is not None:
-			self.image.setPixmap(QPixmap(icon))
+			self.image.setPixmap(QtGui.QPixmap(icon).scaled(
+				QtCore.QSize(self.image.geometry().width(), self.image.geometry().height())
+			))
 	
 if __name__ == "__main__":
 	app = QtGui.QApplication(sys.argv)

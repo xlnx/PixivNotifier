@@ -88,6 +88,111 @@
 					"bookmark_count": 6
 				}
 			}
+		},
+		{
+			"user_id": 10949667,
+			"notified_at": "Sun, 20 Aug 2017 01:05:21 +0900",
+			"details": {
+				"count": 1,
+				"content": {
+					"comment_count": 1
+				},
+				"target": {
+					"url": "https://i.pximg.net/c/128x128/img-master/img/2017/08/09/03/26/28/64307863_p0_square1200.jpg",
+					"type": "illust",
+					"id": 64307863,
+					"title": "あかり~"
+				}
+			},
+			"unread": false,
+			"type": "commented",
+			"id": 31567883
+		},
+		{
+			"id": 379357192,
+			"ids": [
+				379357192
+			],
+			"notified_at": "Sun, 20 Aug 2017 12:33:02 +0900",
+			"type": "favorited",
+			"unread": 0,
+			"correct": true,
+			"details": {
+				"users": [
+					{
+						"id": 26989238,
+						"name": "xlnx",
+						"url": "https:\\/\\/i.pximg.net\\/user-profile\\/img\\/2017\\/08\\/16\\/23\\/29\\/10\\/13052334_a0dc221692e0a6dcc8fd302b92dfd038_50.png"
+					}
+				]
+			}
+		},
+		{
+			"id": 24778695,
+			"user_id": 10949667,
+			"notified_at": "Sun, 20 Aug 2017 10:12:28 +0900",
+			"type": "nice",
+			"unread": false,
+			"details": {
+				"target": {
+					"id": 64461432,
+					"type": "illust",
+					"title": "Subterranean Rose",
+					"url": "https:\\/\\/i.pximg.net\\/c\\/128x128\\/img-master\\/img\\/2017\\/08\\/17\\/02\\/58\\/16\\/64461432_p0_square1200.jpg"
+				},
+				"count": 6
+			}
+		},
+		{
+			"id": 25401053,
+			"user_id": 10949667,
+			"notified_at": "Sun, 20 Aug 2017 03:13:47 +0900",
+			"type": "nice",
+			"unread": false,
+			"details": {
+				"target": {
+					"id": 64157922,
+					"type": "illust",
+					"title": "\\u3053\\u3044\\u3057~",
+					"url": "https:\\/\\/i.pximg.net\\/c\\/128x128\\/img-master\\/img\\/2017\\/08\\/01\\/01\\/25\\/26\\/64157922_p0_square1200.jpg"
+				},
+				"count": 7
+			}
+		},
+		{
+			"id": 23032189,
+			"user_id": 10949667,
+			"notified_at": "Sun, 20 Aug 2017 03:13:12 +0900",
+			"type": "nice",
+			"unread": false,
+			"details": {
+				"target": {
+					"id": 64307863,
+					"type": "illust",
+					"title": "\\u3042\\u304b\\u308a~",
+					"url": "https:\\/\\/i.pximg.net\\/c\\/128x128\\/img-master\\/img\\/2017\\/08\\/09\\/03\\/26\\/28\\/64307863_p0_square1200.jpg"
+				},
+				"count": 10
+			}
+		},
+		{
+			"id": 31567883,
+			"user_id": 10949667,
+			"notified_at": "Sun, 20 Aug 2017 01:05:21 +0900",
+			"type": "commented",
+			"unread": false,
+			"details": {
+				"target": {
+					"id": 64307863,
+					"type": "illust",
+					"title": "\\u3042\\u304b\\u308a~",
+					"url": "https:\\/\\/i.pximg.net\\/c\\/128x128\\/img-master\\/img\\/2017\\/08\\/09\\/03\\/26\\/28\\/64307863_p0_square1200.jpg"
+				},
+				"count": 1,
+				"content": {
+					"comment_count": 1
+				}
+			}
 		}
 	],
 	"remaining_unread_count": 0

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>300</width>
-    <height>300</height>
+    <height>290</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>0</x>
      <y>0</y>
      <width>300</width>
-     <height>300</height>
+     <height>290</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -90,7 +90,7 @@ QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical
       <x>0</x>
       <y>0</y>
       <width>300</width>
-      <height>300</height>
+      <height>290</height>
      </rect>
     </property>
    </widget>

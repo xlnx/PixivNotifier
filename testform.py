@@ -1,24 +1,9 @@
-import threading
-import time
-
-class CheckMessageThread(threading.Thread):
-	def __init__(self, parent = None):
-		threading.Thread.__init__(self)
-		self.msgQueue = []
-	def run(self):
-		while True:
-			x = self.msgQueue[0]
-			self.msgQueue.
-			print self.x
-			time.sleep(1)
-	def change(self, x):
-		self.x = x
-
-thread = CheckMessageThread()
-thread.start()
-i = 0
-while (1):
-	print '===='
-	i = i + 1
-	thread.x = i
-	time.sleep(2)
+print reduce(lambda x, y: str(x['name']) + u', ' + str(y['name']), [{
+						"id": 26989238,
+						"name": "xlnx",
+						"url": "https:\\/\\/i.pximg.net\\/user-profile\\/img\\/2017\\/08\\/16\\/23\\/29\\/10\\/13052334_a0dc221692e0a6dcc8fd302b92dfd038_50.png"
+					},{
+						"id": 26989238,
+						"name": "xlnx",
+						"url": "https:\\/\\/i.pximg.net\\/user-profile\\/img\\/2017\\/08\\/16\\/23\\/29\\/10\\/13052334_a0dc221692e0a6dcc8fd302b92dfd038_50.png"
+					}])

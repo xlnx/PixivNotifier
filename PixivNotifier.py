@@ -23,6 +23,7 @@ class Window(QtGui.QMainWindow, WindowUI):
 
 		# set window attribute
 		self.setWindowFlags(QtCore.Qt.WindowTitleHint) 
+		self.messageLookup = {}
 
 		# messageBox 
 		self.messageBox = MessageBox.MessageBox(self.tbCreator)
@@ -33,6 +34,7 @@ class Window(QtGui.QMainWindow, WindowUI):
 		self.connect(self, QtCore.SIGNAL("login-fail"), self.login_fail)
 		self.connect(self, QtCore.SIGNAL("receive-msg"), self.dispatchMsg)
 		self.connect(self, QtCore.SIGNAL("set-user-avatar"), self.set_user_avatar)
+		self.connect(self, QtCore.SIGNAL("set-user-name"), self.set_user_name)
 		self.btnLogin.clicked.connect(PixivSync.sync.login)
 
 		#设置一个iconComboBox
@@ -85,10 +87,6 @@ class Window(QtGui.QMainWindow, WindowUI):
 	def showMessage(self, title, msg, icon = QtGui.QSystemTrayIcon.MessageIcon()):
 		self.trayIcon.showMessage(title, msg, icon, 1500)
 
-	def addMsg(self, msg):
-		self.messageBox.push_back(title = msg['type'], 
-			content = msg['details'], time = msg['notified_at'])
-
 	def setLoginMode(self, login = True):
 		if login:
 			self.pnlLogin.show()
@@ -114,19 +112,40 @@ class Window(QtGui.QMainWindow, WindowUI):
 	def dispatchMsg(self, msg):
 		data = json.loads(msg)
 		for x in data['items']:
-			if x['unread']:
+			unread = x['unread']
+			x[unread] = False
+			if str(x) not in self.messageLookup:
+				self.messageLookup[str(x)] = True
 				details = x['details']
-				{
-					'nice': lambda: 
-						self.showMessage(u'赞！', u'「' + 
-								details['target']['title'] + 
-								u'」已收到' + str(details['count']) + u'个赞！'),
-					'bookmarked': lambda:
-						self.showMessage(u'收藏', u'已有' + 
-								str(details['content']['bookmark_count']) + 
-								u'人收藏了「' + details['target']['title'] + u'」~')
-				}[x['type']]()
-				self.addMsg(x)
+				f = {
+					'nice': lambda: (u'赞！', u'「' + details['target']['title'] + 
+								u'」已收到' + str(details['count']) + u'个赞！', 
+								cache.image.get(details['target']['url'])),
+					'bookmarked': lambda: (u'收藏', u'已有' + str(details['content']['bookmark_count']) + 
+								u'人收藏了「' + details['target']['title'] + u'」~',
+								cache.image.get(details['target']['url'])),
+					'commented': lambda: (u'评论', u'「' + details['target']['title'] + u'」收到了第' +
+								str(details['content']['comment_count']) + u'条评论！',
+								cache.image.get(details['target']['url'])),
+					'favorited': lambda: (u'新粉丝', 
+								(reduce(lambda x, y: str(x['name']) + u', ' + str(y['name']), details['users'])
+								if len(details['users']) > 1 else str(details['users'][0]['name']))  + u'关注了你！',
+								cache.image.get(details['users'][0]['url'], headers = PixivUtil.create_header(
+									PixivUtil.pixiv.return_to
+								)))
+				}[x['type']]
+				if f is None:
+					raise Exception("unknown message type: " + x['type'] + " with: " + x)
+				m = f()
+				if unread:
+					self.showMessage(m[0], m[1])
+				self.messageBox.push_back(
+					title = m[0].encode('gbk'), 
+					content = m[1].encode('gbk'), 
+					time = str(x['notified_at']),
+					icon = m[2],
+					unread = unread
+				)
 		if data['remaining_unread_count'] > 0:
 			self.showMessage(u'未读消息', u'还有' + str(data['remaining_unread_count']) + u'条...')
 	
@@ -151,6 +170,10 @@ class Window(QtGui.QMainWindow, WindowUI):
 
 	def set_user_avatar(self, img):
 		self.set_round_img(self.userAvatar, QtGui.QPixmap(img))
+
+	def set_user_name(self, s):
+		self.userName.setText(s)
+		self.userNameShadow.setText(s)
 
 if __name__ == "__main__":
 	PixivSync.init()

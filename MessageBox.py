@@ -16,11 +16,13 @@ class MessageBox(QtGui.QWidget, MsgBxUI):
 		self.gLayout.setSpacing(0)
 		self.gLayout.setAlignment(QtCore.Qt.AlignTop)
 
-	def push_back(self, title = None, content = None, time = None, icon = None):
+	def push_back(self, title = None, content = None, time = None, icon = None, unread = True):
 		msg = Message.Message(self)
 		self.msgList.append(msg)
 		msg.setAttribute(title = title, content = content, time = time, icon = icon)
 		self.gLayout.addWidget(msg)
+		if not unread:
+			pass
 		msg.show()
 
 	def erase(self, index):
