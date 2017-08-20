@@ -33,14 +33,14 @@ class Pixiv():
 		self.notify_suffix = 'op=notify&tt='
 
 	def login(self, id, pswd):
-		post_key = BeautifulSoup(se.get(self.base_url, headers = self.headers).text, 'lxml').find('input')['value']
+		post_key = BeautifulSoup(get(se, self.base_url, headers = self.headers).text, 'lxml').find('input')['value']
 		data = {
 			'pixiv_id': id,
 			'password': pswd,
 			'return_to': self.return_to,
 			'post_key': post_key
 		}
-		resp_text = se.post(self.login_url, data = data, headers = self.headers).text
+		resp_text = post(se, self.login_url, data = data, headers = self.headers).text
 		resp = json.loads(resp_text, 'utf-8')
 		if 'success' not in resp['body']:
 			for x in resp['body']['validation_errors']:
@@ -59,12 +59,10 @@ class Pixiv():
 			cookies['__utmz'] = '235335808.1502737260.45.7.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided)'
 			se.cookies = requests.utils.cookiejar_from_dict(cookies, cookiejar = None, overwrite = True)
 			
-			main_page_html = se.get(self.return_to, timeout = 3).text
+			main_page_html = get(se, self.return_to, timeout = 3).text
 			main_page = BeautifulSoup(main_page_html, 'lxml')
-
-			self.post_key = main_page.find('input', attrs = {'name': 'tt'})['value']
-			self.notify_msg = self.notify_suffix + self.post_key
-			
+			# self.post_key = main_page.find('input', attrs = {'name': 'tt'})['value']
+			# self.notify_msg = self.notify_suffix + self.post_key
 			self.user_page_php = main_page.find('a', 
 				attrs = {'class': 'user-name js-click-trackable-later'})['href']
 			self.user_id = re.findall(r'\?id=(.+)', self.user_page_php)[0]
@@ -75,37 +73,15 @@ class Pixiv():
 		ss = requests.session()
 		ss.cookies = se.cookies
 		return ss
-		# ss = requests.session()
-		# post_key = BeautifulSoup(ss.get(self.base_url, headers = self.headers).text, 'lxml').find('input')['value']
-		# data = {
-		# 	'pixiv_id': self.pid,
-		# 	'password': self.pswd,
-		# 	'return_to': self.return_to,
-		# 	'post_key': post_key
-		# }
-		# resp_text = ss.post(self.login_url, data = data, headers = self.headers).text
-		# resp = json.loads(resp_text, "utf-8")
-		# if 'success' in resp['body']:
-		# 	return ss
-		# else:
-		# 	return None
 
 	def check_msg(self):
-		cookies = requests.utils.dict_from_cookiejar(se.cookies)
-		l = re.findall(r'([^\.]+)', cookies['__utmb'])
-		cookies['__utmb'] = l[0] + '.' + str(int(l[1]) + 1) + '.' + l[2] + '.' + l[3] 
-		se.cookies = requests.utils.cookiejar_from_dict(cookies, cookiejar = None, overwrite = True)
 		ss = se#self.getServer()
-		# print requests.utils.dict_from_cookiejar(ss.cookies)
-		# main_page_html = ss.get(self.return_to, timeout = 3).text
-		# print main_page_html
-		# main_page = BeautifulSoup(main_page_html, 'lxml')
-		# post_key = main_page.find('input', attrs = {'name': 'tt'})['value']
-		# notify_msg = self.notify_suffix + post_key
-		# print requests.utils.dict_from_cookiejar(ss.cookies)
-		response = ss.post(self.notify_work_url, 
-			headers = self.notify_headers,
-			data = self.notify_msg
+		main_page_html = get(ss, self.return_to, timeout = 3).text
+		main_page = BeautifulSoup(main_page_html, 'lxml')
+		post_key = main_page.find('input', attrs = {'name': 'tt'})['value']
+		notify_msg = self.notify_suffix + post_key
+		response =  post(ss, self.notify_work_url, 
+			headers = self.notify_headers, data = notify_msg
 		)
 		# print requests.utils.dict_from_cookiejar(ss.cookies)
 		# print post_key
@@ -118,6 +94,20 @@ def create_header(url):
 		'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) '
 				'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
 	}
+
+def get(ss, *args, **kwargs):
+	while 1:
+		try:
+			return ss.get(*args, **kwargs)
+		except:
+			continue
+
+def post(ss, *args, **kwargs):
+	while 1:
+		try:
+			return ss.post(*args, **kwargs)
+		except:
+			continue
 
 pixiv = Pixiv()
 

@@ -23,6 +23,7 @@ class MessageBox(QtGui.QWidget, MsgBxUI):
 		self.gLayout.addWidget(msg)
 		if not unread:
 			pass
+			# msg.setOutOfDate()
 		msg.show()
 
 	def erase(self, index):

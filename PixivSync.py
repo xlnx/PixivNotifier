@@ -10,6 +10,7 @@ import thread
 import threading
 import PixivUtil
 import requests
+import PixivNotifier
 
 class Sync():
 	def __init__(self):
@@ -54,7 +55,6 @@ class Sync():
 		return False
 
 	def pixivLogin(self):
-		import PixivNotifier
 		PixivNotifier.window.lePixivID.setReadOnly(True)
 		PixivNotifier.window.lePassword.setReadOnly(True)
 		PixivNotifier.window.btnLogin.setEnabled(False)
@@ -78,7 +78,6 @@ class CheckMessageThread(threading.Thread):
 		self.exitSignal = False
 		self.interval = interval
 	def run(self):
-		import PixivNotifier
 		# PixivNotifier.window.emit(QtCore.SIGNAL("receive-msg"), '{"items":[{"id":24326867,"user_id":10949667,"notified_at":"Thu, 17 Aug 2017 12:07:23 +0900","type":"nice","unread":true,"details":{"target":{"id":64422822,"type":"illust","title":"Heartbroken Koishi","url":"https://i.pximg.net/c/128x128/img-master/img/2017/08/15/04/09/26/64422822_p0_square1200.jpg"},"count":9}},{"id":317000650,"user_id":10949667,"notified_at":"Thu, 17 Aug 2017 12:07:23 +0900","type":"bookmarked","unread":true,"details":{"target":{"id":64422822,"type":"illust","title":"Heartbroken Koishi","url":"https://i.pximg.net/c/128x128/img-master/img/2017/08/15/04/09/26/64422822_p0_square1200.jpg"},"count":8,"content":{"bookmark_count":8}}},{"id":317490967,"user_id":10949667,"notified_at":"Thu, 17 Aug 2017 10:40:34 +0900","type":"bookmarked","unread":true,"details":{"target":{"id":64461432,"type":"illust","title":"Subterranean Rose","url":"https://i.pximg.net/c/128x128/img-master/img/2017/08/17/02/58/16/64461432_p0_square1200.jpg"},"count":1,"content":{"bookmark_count":1}}},{"id":24778695,"user_id":10949667,"notified_at":"Thu, 17 Aug 2017 10:40:34 +0900","type":"nice","unread":true,"details":{"target":{"id":64461432,"type":"illust","title":"Subterranean Rose","url":"https://i.pximg.net/c/128x128/img-master/img/2017/08/17/02/58/16/64461432_p0_square1200.jpg"},"count":2}},{"id":317393171,"user_id":10949667,"notified_at":"Wed, 16 Aug 2017 23:33:27 +0900","type":"bookmarked","unread":false,"details":{"target":{"id":64157922,"type":"illust","title":"こいし~","url":"https://i.pximg.net/c/128x128/img-master/img/2017/08/01/01/25/26/64157922_p0_square1200.jpg"},"count":6,"content":{"bookmark_count":6}}}],"remaining_unread_count":0}')
 		while not self.exitSignal:
 			msg = PixivUtil.pixiv.check_msg()
@@ -89,46 +88,54 @@ class CheckMessageThread(threading.Thread):
 class UserDataThread(threading.Thread):
 	def __init__(self):
 		super(UserDataThread, self).__init__()
-	def run(self):
-		import PixivNotifier
-		ci = cache.imgCache('userData/' + PixivUtil.pixiv.user_id + '/')
-		di = cache.dataCache('userData/' + PixivUtil.pixiv.user_id + '/user_data.json')
-		s = ci.find(name = 'user_avatar.jpg')
-		if s is not None:
-			PixivNotifier.window.emit(QtCore.SIGNAL('set-user-avatar'), s)
-		s = di.read([u'ニックネーム'], 'user_profile')
+		self.ci = cache.imgCache('userData/' + PixivUtil.pixiv.user_id + '/')
+		self.di = cache.dataCache('userData/' + PixivUtil.pixiv.user_id + '/user_data.json')
+		
+	def updateUserProfile(self):
+		s = self.di.read([u'ニックネーム'], 'user_profile')
 		if u'ニックネーム' in s:
 			PixivNotifier.window.emit(QtCore.SIGNAL('set-user-name'), s[u'ニックネーム'])
-			
+
+	def updateUserAvatar(self):
+		s = self.ci.find(name = 'user_avatar.jpg')
+		if s is not None:
+			PixivNotifier.window.emit(QtCore.SIGNAL('set-user-avatar'), s)
+
+	def updateUserData(self):
+		self.updateUserAvatar()
+		self.updateUserProfile()
+
+	def pullUserData(self):
 		# pull user_page
 		ss = PixivUtil.pixiv.getServer()
 		sync.user_page_url = PixivUtil.pixiv.user_page_php
-		
-		sync.user_page_html = ss.get(sync.user_page_url, 
+		sync.user_page_html = PixivUtil.get(ss, sync.user_page_url, 
 			headers = PixivUtil.create_header('http://www.pixiv.net')).text
 		sync.user_page = BeautifulSoup(sync.user_page_html, 'lxml')
 		user_img = sync.user_page.find('img', 
 			attrs = {'class': 'user-image'})['src']
 
 		# pull user_image
-		img_name = ci.update(user_img, 'user_avatar', headers = PixivUtil.create_header(sync.user_page_url))
+		img_name = self.ci.update(user_img, 'user_avatar', headers = PixivUtil.create_header(sync.user_page_url))
 		PixivNotifier.window.emit(QtCore.SIGNAL('set-user-avatar'), img_name)
+		self.updateUserAvatar()
 
 		# pull user_data
 		user_data = sync.user_page.find_all('table', attrs = {'class': 'ws_table'})
 		for y in user_data[0].find_all('tr'):
-			di.write({y.find('td', attrs = {'class': 'td1'}).string:
+			self.di.write({y.find('td', attrs = {'class': 'td1'}).string:
 				y.find('td', attrs = {'class': 'td2'}).string}, 'user_profile')
+		self.updateUserProfile()
 		if len(user_data) > 1:
 			for y in user_data[1].find_all('tr'):
-				di.write({y.find('td', attrs = {'class': 'td1'}).string: 
+				self.di.write({y.find('td', attrs = {'class': 'td1'}).string: 
 					y.find('td', attrs = {'class': 'td2'}).string}, 'environment')
 		
 		# pull user_illust
 		sync.user_illust_list = []
 		ill_list = sync.user_page.find_all('a', attrs = {'class': 'active_gray'})
 		sync.user_illust_url = PixivUtil.pixiv.return_to + '/' + str(ill_list[0]['href'])
-		sync.user_illust_html = ss.get(sync.user_illust_url,
+		sync.user_illust_html = PixivUtil.get(ss, sync.user_illust_url,
 			headers = PixivUtil.create_header(sync.user_page_url)).text
 		sync.user_illust = BeautifulSoup(sync.user_illust_html, 'lxml')
 
@@ -151,7 +158,7 @@ class UserDataThread(threading.Thread):
 						'details': PixivUtil.pixiv.return_to + str(bk['href'])
 					}
 				}
-				html = ss.get(value['page_url']).text
+				html = PixivUtil.get(ss, value['page_url']).text
 				ilpg = BeautifulSoup(html, 'lxml')
 				img_url = None
 				for x in ilpg.find_all('img'):
@@ -169,25 +176,28 @@ class UserDataThread(threading.Thread):
 		# pull user_bookmark
 		sync.user_bookmark_url = PixivUtil.pixiv.return_to + str(ill_list[0]['href'])
 
+	def run(self):
+		self.updateUserData()
+		self.pullUserData()
+
 def init():
 	app = QtGui.QApplication(sys.argv)
-	import PixivNotifier
-	try:
-		QtGui.QApplication.setQuitOnLastWindowClosed(False)
-		QtCore.QTextCodec.setCodecForTr(QtCore.QTextCodec.codecForName("system"))
-		QtCore.QTextCodec.setCodecForCStrings(QtCore.QTextCodec.codecForName("system"))
-		QtCore.QTextCodec.setCodecForLocale(QtCore.QTextCodec.codecForName("system"))
+	# try:
+	QtGui.QApplication.setQuitOnLastWindowClosed(False)
+	QtCore.QTextCodec.setCodecForTr(QtCore.QTextCodec.codecForName("system"))
+	QtCore.QTextCodec.setCodecForCStrings(QtCore.QTextCodec.codecForName("system"))
+	QtCore.QTextCodec.setCodecForLocale(QtCore.QTextCodec.codecForName("system"))
 
-		PixivNotifier.window = PixivNotifier.Window()
-		user = cache.config.read(('pixiv_id', 'password'))
-		if 'pixiv_id' in user and 'password' in user:
-			PixivNotifier.window.lePixivID.setText(user['pixiv_id'])
-			PixivNotifier.window.lePassword.setText(user['password'])
-			PixivNotifier.window.btnLogin.setFocus()
-			sync.login()
-		else:
-			PixivNotifier.window.lePixivID.setFocus()
-		PixivNotifier.window.show()
-	except Exception, e:
-		print e.message
+	PixivNotifier.window = PixivNotifier.Window()
+	user = cache.config.read(('pixiv_id', 'password'))
+	if 'pixiv_id' in user and 'password' in user:
+		PixivNotifier.window.lePixivID.setText(user['pixiv_id'])
+		PixivNotifier.window.lePassword.setText(user['password'])
+		PixivNotifier.window.btnLogin.setFocus()
+		sync.login()
+	else:
+		PixivNotifier.window.lePixivID.setFocus()
+	PixivNotifier.window.show()
+	# except Exception, e:
+		# print e.message
 	sys.exit(app.exec_())

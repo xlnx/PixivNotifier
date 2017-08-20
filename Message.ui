@@ -29,7 +29,12 @@
     </size>
    </property>
    <property name="styleSheet">
-    <string notr="true">QFrame:hover
+    <string notr="true">QFrame#frame
+{
+	background-color: rgb(212, 227, 240);
+	border-color: rgb(212, 227, 240);
+}
+QFrame#frame:hover
 {
 	background-color: rgb(221, 234, 246);
 	border-color: rgb(221, 234, 246);
@@ -60,7 +65,8 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">font: 75 10pt &quot;微软雅黑&quot;;</string>
+     <string notr="true">font: 75 10pt &quot;微软雅黑&quot;;
+background: transparent;</string>
     </property>
     <property name="text">
      <string>title</string>
@@ -86,7 +92,8 @@
     </property>
     <property name="styleSheet">
      <string notr="true">color: rgb(128, 128, 128);
-font: 9pt &quot;微软雅黑&quot;;</string>
+font: 9pt &quot;微软雅黑&quot;;
+background: transparent;</string>
     </property>
     <property name="text">
      <string>content</string>
@@ -115,7 +122,8 @@ font: 9pt &quot;微软雅黑&quot;;</string>
     </property>
     <property name="styleSheet">
      <string notr="true">color: rgb(128, 128, 128);
-font: 9pt &quot;微软雅黑&quot;;</string>
+font: 9pt &quot;微软雅黑&quot;;
+background: transparent;</string>
     </property>
     <property name="text">
      <string>16:30</string>
@@ -135,6 +143,9 @@ font: 9pt &quot;微软雅黑&quot;;</string>
       <width>48</width>
       <height>48</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background: transparent;</string>
     </property>
     <property name="text">
      <string/>

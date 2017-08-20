@@ -22,9 +22,23 @@ class Message(QtGui.QWidget, MsgUI):
 			self.image.setPixmap(QtGui.QPixmap(icon).scaled(
 				QtCore.QSize(self.image.geometry().width(), self.image.geometry().height())
 			))
+
+	def setOutOfDate(self):
+		self.frame.setStyleSheet("""
+			QFrame#frame
+			{
+				background-color: rgb(218, 218, 218)
+			}
+			QFrame#frame:hover
+			{
+				background-color: rgb(221, 234, 246);
+				border-color: rgb(221, 234, 246);
+			}
+		""")
 	
 if __name__ == "__main__":
 	app = QtGui.QApplication(sys.argv)
 	a = Message()
 	a.show()
+	a.setOutOfDate()
 	sys.exit(app.exec_())

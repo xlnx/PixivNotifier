@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>300</width>
+    <height>470</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>PixivNotifier</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">font: 25 9pt &quot;微软雅黑 Light&quot;;</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QFrame" name="pnlLogin">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>300</width>
+      <height>470</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>300</width>
+      <height>470</height>
+     </size>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QLineEdit" name="lePassword">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>320</y>
+       <width>160</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border-radius: 10px;
+font: 9pt &quot;微软雅黑&quot;;</string>
+     </property>
+     <property name="placeholderText">
+      <string>密码</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lePixivID">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>280</y>
+       <width>160</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border-radius: 10px;
+font: 9pt &quot;微软雅黑&quot;;</string>
+     </property>
+     <property name="placeholderText">
+      <string>用户名</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnLogin">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>360</y>
+       <width>160</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border-radius: 10px;
+background-color: rgb(170, 170, 255);
+font: 9pt &quot;微软雅黑&quot;;</string>
+     </property>
+     <property name="text">
+      <string>登录</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QFrame" name="pnlMain">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>300</width>
+      <height>470</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>300</width>
+      <height>470</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background: rgba(203, 223, 238, 80);</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>140</y>
+       <width>300</width>
+       <height>330</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QTabWidget::pane{
+	border:none;
+}
+QTabWidget{
+	background: rgb(203, 223, 238);
+}
+QTabWidget::tab-bar{
+    alignment:left;
+}
+QTabBar::tab{
+	background:rgba(255, 255, 255, 15);
+	color:white;
+	border-bottom:5px solid rgb(85, 170, 75);
+	min-width:100px;
+	min-height:40px;
+}
+QTabBar::tab:hover{
+	background:rgba(255, 255, 255, 100);
+}
+QTabBar::tab:first{
+	border-bottom:5px solid rgb(255, 0, 127, 200);
+}
+QTabBar::tab:last{
+	border-bottom:5px solid rgb(0, 85, 255, 200);
+}
+QTabBar::tab:selected{
+	background:rgba(255, 255, 255, 170);
+	color:green;
+}</string>
+     </property>
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="tbMain">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <attribute name="title">
+       <string/>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="tbLoved">
+      <attribute name="title">
+       <string/>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="tbMessage">
+      <attribute name="title">
+       <string/>
+      </attribute>
+     </widget>
+    </widget>
+    <widget class="QFrame" name="header">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>300</width>
+       <height>140</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(189, 221, 245);</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <widget class="QLabel" name="userAvatar">
+      <property name="geometry">
+       <rect>
+        <x>8</x>
+        <y>8</y>
+        <width>96</width>
+        <height>96</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border-radius: 48px;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="userName">
+      <property name="geometry">
+       <rect>
+        <x>116</x>
+        <y>24</y>
+        <width>161</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 75 14pt &quot;微软雅黑&quot;;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="userNameShadow">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>10</y>
+        <width>311</width>
+        <height>141</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 75 64pt &quot;微软雅黑&quot;;
+color: rgba(170, 170, 255, 60);
+background: transparent;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="leSearch">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>112</y>
+        <width>300</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QLineEdit{
+	background-color: rgba(255, 255, 255, 50);
+	border-width: 0;
+	border-color: rgb(255, 255, 255);
+	border-style: outset;
+	font: 10pt &quot;微软雅黑&quot;;
+}
+QLineEdit:Hover{
+	background-color: rgba(255, 255, 255, 100);
+}
+QLineEdit:Focus{
+	background-color: rgba(255, 255, 255, 200);
+}</string>
+      </property>
+      <property name="placeholderText">
+       <string>Search Pixiv</string>
+      </property>
+     </widget>
+     <zorder>userNameShadow</zorder>
+     <zorder>userAvatar</zorder>
+     <zorder>userName</zorder>
+     <zorder>leSearch</zorder>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>

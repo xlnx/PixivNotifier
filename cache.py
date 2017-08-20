@@ -20,7 +20,12 @@ class imgCache:
 			os.mkdir(dir)
 
 	def downloadImg(self, url, fileName, headers = {}):
-		ir = requests.get(url, headers = headers)
+		while 1:
+			try:
+				ir = requests.get(url, headers = headers)
+				break
+			except Exception, e:
+				continue
 		if ir.status_code == 200:
 			open(fileName, 'wb').write(ir.content)
 
