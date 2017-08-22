@@ -24,7 +24,8 @@ class MessageBox(QtGui.QWidget, MsgBxUI):
 		if not unread:
 			pass
 			# msg.setOutOfDate()
-		msg.show()
+		# msg.show()
+		return msg
 
 	def erase(self, index):
 		pass

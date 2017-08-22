@@ -9,6 +9,7 @@ import cache
 import MessageBox
 
 window = None
+queryInterval = 45
 
 import PixivSync
 # import threading
@@ -25,6 +26,7 @@ class Window(QtGui.QMainWindow, WindowUI):
 		self.setWindowFlags(QtCore.Qt.WindowTitleHint) 
 		self.setFixedSize(self.width(), self.height())
 		self.messageLookup = {}
+		self.privateLookup = {}
 
 		# messageBox 
 		self.messageBox = MessageBox.MessageBox(self.tbMessage)
@@ -102,7 +104,7 @@ class Window(QtGui.QMainWindow, WindowUI):
 		# self.hide()
 		self.setLoginMode(False)
 		PixivSync.sync.fetchUserData()
-		PixivSync.sync.beginCheckMsg(30)
+		PixivSync.sync.beginCheckMsg(queryInterval)
 		cache.config.write({
 			'pixiv_id': self.pixiv_id,
 			'password': self.password
@@ -162,16 +164,26 @@ class Window(QtGui.QMainWindow, WindowUI):
 		priv = json.loads(priv)
 		if not priv['error']:
 			for x in priv['body']['message_threads']:
-				self.privateBox.push_back(
-					unread = True,
-					title = unicode(x['thread_name']),
-					content = unicode(x['latest_content']),
-					time = u"?",
-					icon = cache.image.get(x['icon_url']['100x100'], 
-						headers = PixivUtil.create_header(
-							PixivUtil.pixiv.return_to
-						))
-				)
+				id = int(x['thread_id'])
+				if id not in self.privateLookup:
+					self.privateLookup[id] = self.privateBox.push_back(
+						unread = True,
+						title = unicode(x['thread_name']),
+						content = unicode(x['latest_content']),
+						time = unicode(x['modified_at']),
+						icon = cache.image.get(x['icon_url']['100x100'], 
+							headers = PixivUtil.create_header(
+								PixivUtil.pixiv.return_to
+							))
+					)
+				elif unicode(x['modified_at']) != unicode(self.privateLookup[id].time.text()):
+					self.privateLookup[id].setAttribute(
+						content = unicode(x['latest_content']),
+						time = unicode(x['modified_at'])
+					)
+					self.showMessage(unicode(x['thread_name']) + (u'（' + unicode(x['unread_num']) + u'）' 
+						if int(x['unread_num']) > 1 else u''), unicode(x['latest_content']))
+			# ))
 		else:
 			print priv['message']
 	
