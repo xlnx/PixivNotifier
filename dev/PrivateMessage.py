@@ -42,7 +42,7 @@ class PrivateMessage(QtGui.QWidget, MsgUI):
 		self.time.setText(getTime(msg))
 		if not self.active:
 			self.unreadCount += 1
-			self.lblCount.setText(str(self.unreadCount))
+			self.lblCount.setText(unicode(self.unreadCount))
 			self.notify.setStyleSheet("""
 				border-radius: 8px;
 				background-color: rgb(226, 0, 0);

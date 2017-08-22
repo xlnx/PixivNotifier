@@ -13,11 +13,12 @@ class Message(QtGui.QWidget, MsgUI):
 
 	def setAttribute(self, title = None, content = None, time = None, icon = None):
 		if title is not None:
-			self.title.setText(str(title))
+			self.title.setText(unicode(title))
 		if content is not None:
-			self.content.setText(str(content))
+			self.content.setText(unicode(content))
+			self.content.setToolTip(unicode(content))
 		if time is not None:
-			self.time.setText(str(time))
+			self.time.setText(unicode(time))
 		if icon is not None:
 			self.image.setPixmap(QtGui.QPixmap(icon).scaled(
 				QtCore.QSize(self.image.geometry().width(), self.image.geometry().height())

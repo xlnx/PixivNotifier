@@ -83,6 +83,8 @@ class CheckMessageThread(threading.Thread):
 			msg = PixivUtil.pixiv.check_msg()
 			# print msg
 			PixivNotifier.window.emit(QtCore.SIGNAL("receive-msg"), msg)
+			priv = PixivUtil.pixiv.check_priv()
+			PixivNotifier.window.emit(QtCore.SIGNAL("receive-priv"), priv)
 			time.sleep(self.interval)
 
 class UserDataThread(threading.Thread):
@@ -112,8 +114,13 @@ class UserDataThread(threading.Thread):
 		sync.user_page_html = PixivUtil.get(ss, sync.user_page_url, 
 			headers = PixivUtil.create_header('http://www.pixiv.net')).text
 		sync.user_page = BeautifulSoup(sync.user_page_html, 'lxml')
-		user_img = sync.user_page.find('img', 
-			attrs = {'class': 'user-image'})['src']
+		try:
+			user_img = sync.user_page.find('img', 
+				attrs = {'class': 'user-image'})['src']
+		except Exception, e:
+			user_img = sync.user_page.find('a', 
+				attrs = {'class': '_user-icon size-80 cover-texture'})['style']
+			user_img = re.findall(r"url\('([^\)]*)'\)", user_img)[0]
 
 		# pull user_image
 		img_name = self.ci.update(user_img, 'user_avatar', headers = PixivUtil.create_header(sync.user_page_url))

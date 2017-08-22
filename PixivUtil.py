@@ -80,13 +80,24 @@ class Pixiv():
 		main_page = BeautifulSoup(main_page_html, 'lxml')
 		post_key = main_page.find('input', attrs = {'name': 'tt'})['value']
 		notify_msg = self.notify_suffix + post_key
-		response =  post(ss, self.notify_work_url, 
+		rmsg =  post(ss, self.notify_work_url, 
 			headers = self.notify_headers, data = notify_msg
 		)
-		# print requests.utils.dict_from_cookiejar(ss.cookies)
-		# print post_key
-		# print response.text
-		return response.text
+		if rmsg == None:
+			return ""
+		return rmsg.text
+
+	def check_priv(self):
+		ss = se
+		# main_page_html = get(ss, self.return_to, timeout = 3).text
+		# main_page = BeautifulSoup(main_page_html, 'lxml')
+		# post_key = main_page.find('input', attrs = {'name': 'tt'})['value']
+		rpriv = get(ss, self.return_to + '/rpc/index.php?mode=latest_message_threads2&num=5',#'&tt=' + post_key,
+			headers = create_header(self.return_to)
+		)
+		if rpriv == None:
+			return ""
+		return rpriv.text
 
 def create_header(url):
 	return {
