@@ -1,0 +1,93 @@
+missing module named PySide - imported by d:\anaconda2\lib\site-packages\PyInstaller\loader\rthooks\pyi_rth_qt4plugins.py
+missing module named org - imported by copy
+missing module named readline - imported by cmd, pdb
+missing module named 'org.python' - imported by pickle, setuptools.sandbox, xml.sax
+missing module named fcntl - imported by tempfile, subprocess
+missing module named riscosenviron - imported by os
+missing module named riscospath - imported by os
+missing module named riscos - imported by os
+missing module named ce - imported by os
+missing module named _emx_link - imported by os
+missing module named os2 - imported by os
+missing module named pwd - imported by posixpath, getpass, shutil, tarfile, distutils.util, distutils.archive_util, netrc
+missing module named posix - imported by os
+missing module named resource - imported by posix
+missing module named pyimod03_importers - imported by d:\anaconda2\lib\site-packages\PyInstaller\loader\rthooks\pyi_rth_pkgres.py
+missing module named 'pkg_resources.extern.pyparsing' - imported by pkg_resources._vendor.packaging.requirements, pkg_resources._vendor.packaging.markers
+missing module named ordereddict - imported by html5lib.treewalkers.etree, html5lib.filters.alphabeticalattributes, pkg_resources._vendor.pyparsing
+missing module named _thread.RLock - imported by _thread, pkg_resources._vendor.pyparsing
+missing module named _thread.get_ident - imported by _thread, future.backports.misc
+missing module named _thread.allocate_lock - imported by _thread, cffi.lock
+missing module named 'com.sun' - imported by pkg_resources._vendor.appdirs
+missing module named com - imported by pkg_resources._vendor.appdirs
+missing module named _sysconfigdata - imported by distutils.sysconfig, sysconfig
+missing module named grp - imported by shutil, tarfile, distutils.archive_util
+missing module named 'win32com.gen_py' - imported by win32com, d:\anaconda2\lib\site-packages\PyInstaller\loader\rthooks\pyi_rth_win32comgenpy.py
+missing module named pkg_resources.extern.packaging - imported by pkg_resources.extern, pkg_resources, setuptools.dist, setuptools.command.egg_info
+missing module named pkg_resources.extern.appdirs - imported by pkg_resources.extern, pkg_resources
+missing module named 'importlib.machinery' - imported by pkg_resources, cffi.verifier
+missing module named 'pkg_resources.extern.six.moves' - imported by pkg_resources, pkg_resources._vendor.packaging.requirements
+missing module named pkg_resources.extern.six - imported by pkg_resources.extern, pkg_resources
+missing module named _imp - imported by pkg_resources
+missing module named _scproxy - imported by urllib, future.backports.urllib.request
+missing module named EasyDialogs - imported by getpass
+missing module named termios - imported by getpass
+missing module named SOCKS - imported by ftplib
+missing module named rourl2path - imported by urllib
+missing module named 'java.lang' - imported by platform, xml.sax._exceptions
+missing module named _xmlplus - imported by xml
+missing module named 'Carbon.File' - imported by plistlib
+missing module named 'Carbon.Files' - imported by plistlib
+missing module named Carbon - imported by plistlib
+missing module named vms_lib - imported by platform
+missing module named java - imported by platform
+missing module named MacOS - imported by platform
+missing module named macresource - imported by MacOS
+missing module named gestalt - imported by platform
+missing module named winreg.OpenKeyEx - imported by winreg, platform
+missing module named winreg.HKEY_LOCAL_MACHINE - imported by winreg, platform
+missing module named winreg.QueryValueEx - imported by winreg, platform
+missing module named winreg.CloseKey - imported by winreg, platform
+missing module named 'urllib.request' - imported by requests.compat
+missing module named 'urllib.parse' - imported by asn1crypto._iri, setuptools.py26compat, setuptools.package_index, requests.compat
+missing module named 'requests.packages.urllib3.packages.six.moves' - imported by requests.packages.urllib3.exceptions, requests.packages.urllib3.connectionpool, requests.packages.urllib3.connection, requests.packages.urllib3.util.response, requests.packages.urllib3.request, requests.packages.urllib3.response, requests.packages.urllib3.poolmanager
+missing module named _dummy_threading - imported by dummy_threading
+missing module named simplejson - imported by requests.compat
+missing module named urllib3 - imported by requests.packages
+missing module named socks - imported by requests.packages.urllib3.contrib.socks
+missing module named certifi - imported by requests.certs
+missing module named testing - imported by cffi.recompiler
+missing module named 'distutils._msvccompiler' - imported by setuptools.monkey
+missing module named setuptools.extern.six - imported by setuptools.extern, setuptools.monkey, setuptools.dist, setuptools.depends, setuptools.command.easy_install, setuptools.sandbox, setuptools.package_index, setuptools.command.egg_info, setuptools.command.sdist, setuptools.command.bdist_egg, setuptools.unicode_utils
+missing module named setuptools_svn - imported by setuptools.command.egg_info
+missing module named 'setuptools.extern.six.moves' - imported by setuptools.dist, setuptools.command.easy_install, setuptools.sandbox, setuptools.command.setopt, setuptools.package_index, setuptools.ssl_support, setuptools.command.egg_info
+missing module named wincertstore - imported by setuptools.ssl_support
+missing module named 'setuptools.extern.six' - imported by setuptools, setuptools.extension
+missing module named cffi._pycparser - imported by cffi, cffi.cparser
+missing module named 'cryptography.hazmat.bindings._commoncrypto' - imported by cryptography.hazmat.bindings.commoncrypto.binding
+missing module named 'six.moves.urllib_parse' - imported by 'six.moves.urllib_parse'
+runtime module named six.moves - imported by cryptography.x509.general_name, cryptography.hazmat.backends.openssl.decode_asn1, html5lib.inputstream
+missing module named iconv_codec - imported by bs4.dammit
+missing module named cchardet - imported by bs4.dammit
+missing module named html5lib.treebuilders.base - imported by html5lib.treebuilders, bs4.builder._html5lib
+missing module named ElementC14N - imported by xml.etree.ElementTree
+missing module named 'genshi.core' - imported by html5lib.treewalkers.genshistream
+missing module named genshi - imported by html5lib.treewalkers.genshistream
+missing module named datrie - imported by html5lib.trie.datrie
+missing module named charade - imported by html5lib.inputstream
+missing module named 'dbm.ndbm' - imported by future.moves.dbm.ndbm
+missing module named gdbm - imported by anydbm, future.moves.dbm.gnu
+missing module named 'dbm.gnu' - imported by future.moves.dbm.gnu
+missing module named 'dbm.dumb' - imported by future.moves.dbm.dumb
+missing module named bsddb3 - imported by bsddb
+missing module named _pybsddb - imported by bsddb, bsddb.db
+missing module named dbm - imported by future.standard_library, future.moves.dbm, whichdb, anydbm, future.moves.dbm.ndbm
+missing module named 'test.test_support' - imported by future.moves.test.support
+missing module named 'test.support' - imported by future.moves.test.support
+missing module named _datetime - imported by future.backports.datetime
+missing module named reprlib.recursive_repr - imported by reprlib, future.backports.misc
+missing module named 'PyQt4.uic.port_v3' - imported by PyQt4.uic.icon_cache
+missing module named 'PyQt4.elementtree' - imported by PyQt4.uic.uiparser
+missing module named elementtree - imported by PyQt4.uic.uiparser
+missing module named ElementTree - imported by PyQt4.uic.uiparser
+invalid module named PyQt4.uic.port_v3.proxy_base - imported by PyQt4.uic.Compiler.qtproxies
