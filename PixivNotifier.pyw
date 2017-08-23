@@ -7,8 +7,11 @@ import PixivUtil
 import systray_rc
 import cache
 import MessageBox
+import IllustBox
+import os
 
 window = None
+path = os.path.abspath(os.path.dirname(__file__) + os.path.sep)
 queryInterval = 45
 
 import PixivSync
@@ -31,6 +34,7 @@ class Window(QtGui.QMainWindow, WindowUI):
 		# messageBox 
 		self.messageBox = MessageBox.MessageBox(self.tbMessage)
 		self.privateBox = MessageBox.MessageBox(self.tbPrivate)
+		self.illustBox = IllustBox.IllustBox(self.tbMain)
 
 		# loginThread update UI using following signals
 		self.loginThread = None
@@ -40,6 +44,7 @@ class Window(QtGui.QMainWindow, WindowUI):
 		self.connect(self, QtCore.SIGNAL("receive-priv"), self.dispatchPriv)
 		self.connect(self, QtCore.SIGNAL("set-user-avatar"), self.set_user_avatar)
 		self.connect(self, QtCore.SIGNAL("set-user-name"), self.set_user_name)
+		self.connect(self, QtCore.SIGNAL('get-illust'), self.get_illust)
 		self.btnLogin.clicked.connect(PixivSync.sync.login)
 
 		#设置一个iconComboBox
@@ -105,6 +110,7 @@ class Window(QtGui.QMainWindow, WindowUI):
 		self.setLoginMode(False)
 		PixivSync.sync.fetchUserData()
 		PixivSync.sync.beginCheckMsg(queryInterval)
+		self.illustBox.reset()
 		cache.config.write({
 			'pixiv_id': self.pixiv_id,
 			'password': self.password
@@ -112,6 +118,9 @@ class Window(QtGui.QMainWindow, WindowUI):
 
 	def login_fail(self, result):
 		self.showMessage(u'登录失败', result[1])
+
+	def get_illust(self, q, r):
+		self.illustBox.endAppend(q, r)
 
 	def dispatchMsg(self, msg):
 		data = json.loads(msg)
@@ -161,7 +170,11 @@ class Window(QtGui.QMainWindow, WindowUI):
 			self.showMessage(u'未读消息', u'还有' + unicode(data['remaining_unread_count']) + u'条...')
 
 	def dispatchPriv(self, priv):
-		priv = json.loads(priv)
+		try:
+			priv = json.loads(priv)
+		except Exception, e:
+			print priv
+			return
 		if not priv['error']:
 			for x in priv['body']['message_threads']:
 				id = int(x['thread_id'])

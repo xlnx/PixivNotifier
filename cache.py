@@ -3,6 +3,7 @@ import requests
 import os
 import json
 import os.path 
+import PixivNotifier
 
 def getFileExt(path): 
 	return os.path.splitext(path)[1]
@@ -45,7 +46,7 @@ class imgCache:
 			fname = self.cacheDir + name + getFileExt(url)
 		if not os.path.isfile(fname):
 			self.downloadImg(url, fname, headers)
-		return fname
+		return PixivNotifier.path + '/' + fname
 
 	def update(self, url, name = None, headers = {}):
 		if name == None:
@@ -54,7 +55,7 @@ class imgCache:
 			fname = self.cacheDir + name + getFileExt(url)
 		# if not os.path.isfile(fname):
 		self.downloadImg(url, fname, headers)
-		return fname
+		return PixivNotifier.path + '/' + fname
 
 image = imgCache()
 

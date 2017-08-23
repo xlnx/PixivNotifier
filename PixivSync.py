@@ -11,12 +11,14 @@ import threading
 import PixivUtil
 import requests
 import PixivNotifier
+import PixivIllust
 
 class Sync():
 	def __init__(self):
 		self.loginLock = False
 		self.msgThread = None
 		self.userThread = None
+		self.illuThread = None
 
 	def isLogining(self):
 		return self.loginLock
@@ -53,6 +55,16 @@ class Sync():
 			self.msgThread.exitSignal = True
 			return True
 		return False
+
+	def getRecommendedList(self):
+		if self.illuThread is not None:
+			self.illuThread.stop()
+		self.illuThread = PixivIllust.IlluThread()
+		self.illuThread.start()
+	
+	def getIllust(self, data):
+		if self.illuThread is not None:
+			self.illuThread.getIllust(data)
 
 	def pixivLogin(self):
 		PixivNotifier.window.lePixivID.setReadOnly(True)
@@ -101,6 +113,7 @@ class UserDataThread(threading.Thread):
 	def updateUserAvatar(self):
 		s = self.ci.find(name = 'user_avatar.jpg')
 		if s is not None:
+
 			PixivNotifier.window.emit(QtCore.SIGNAL('set-user-avatar'), s)
 
 	def updateUserData(self):

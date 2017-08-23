@@ -6,6 +6,7 @@ import time
 import re
 import random
 import json
+import threading
 
 se = requests.session()
 
@@ -16,7 +17,7 @@ class Pixiv():
 		self.login_url = 'https://accounts.pixiv.net/api/login?lang=zh'
 		self.notify_url = '/notify_all.php'
 		self.notify_work_url = 'https://www.pixiv.net/rpc/notify.php'
-		self.return_to = 'http://www.pixiv.net'
+		self.return_to = 'https://www.pixiv.net'
 		
 		self.headers = {
 			'Referer': 'https://accounts.pixiv.net/login?lang=zh&source=pc&view_type=page&ref=wwwtop_accounts_index',
@@ -59,7 +60,7 @@ class Pixiv():
 			cookies['__utmz'] = '235335808.1502737260.45.7.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided)'
 			se.cookies = requests.utils.cookiejar_from_dict(cookies, cookiejar = None, overwrite = True)
 			
-			main_page_html = get(se, self.return_to, timeout = 3).text
+			main_page_html = get(se, self.return_to, timeout = 5).text
 			main_page = BeautifulSoup(main_page_html, 'lxml')
 			# self.post_key = main_page.find('input', attrs = {'name': 'tt'})['value']
 			# self.notify_msg = self.notify_suffix + self.post_key
@@ -76,7 +77,7 @@ class Pixiv():
 
 	def check_msg(self):
 		ss = se#self.getServer()
-		main_page_html = get(ss, self.return_to, timeout = 3).text
+		main_page_html = get(ss, self.return_to, timeout = 5).text
 		main_page = BeautifulSoup(main_page_html, 'lxml')
 		post_key = main_page.find('input', attrs = {'name': 'tt'})['value']
 		notify_msg = self.notify_suffix + post_key
@@ -106,19 +107,29 @@ def create_header(url):
 				'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
 	}
 
+mutex = threading.Lock()
+
 def get(ss, *args, **kwargs):
+	mutex.acquire()
 	while 1:
 		try:
-			return ss.get(*args, **kwargs)
-		except:
-			continue
+			r = ss.get(*args, **kwargs)
+			break
+		except Exception, e:
+			print e.message
+	mutex.release()
+	return r
 
 def post(ss, *args, **kwargs):
+	mutex.acquire()
 	while 1:
 		try:
-			return ss.post(*args, **kwargs)
-		except:
-			continue
+			r = ss.post(*args, **kwargs)
+			break
+		except Exception, e:
+			print e.message
+	mutex.release()
+	return r
 
 pixiv = Pixiv()
 
