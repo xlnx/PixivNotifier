@@ -59,15 +59,6 @@ class Pixiv():
 			cookies['__utmb'] = '235335808.512.9.1503200678674'
 			cookies['__utmz'] = '235335808.1502737260.45.7.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided)'
 			se.cookies = requests.utils.cookiejar_from_dict(cookies, cookiejar = None, overwrite = True)
-			
-			main_page_html = get(se, self.return_to, timeout = 5).text
-			main_page = BeautifulSoup(main_page_html, 'lxml')
-			# self.post_key = main_page.find('input', attrs = {'name': 'tt'})['value']
-			# self.notify_msg = self.notify_suffix + self.post_key
-			self.user_page_php = main_page.find('a', 
-				attrs = {'class': 'user-name js-click-trackable-later'})['href']
-			self.user_id = re.findall(r'\?id=(.+)', self.user_page_php)[0]
-			self.user_page_php = self.return_to + self.user_page_php
 			return None
 	
 	def getServer(self):

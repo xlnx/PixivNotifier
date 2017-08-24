@@ -4,6 +4,7 @@ import os
 import json
 import os.path 
 import PixivNotifier
+import PixivUtil
 
 def getFileExt(path): 
 	return os.path.splitext(path)[1]
@@ -23,7 +24,8 @@ class imgCache:
 	def downloadImg(self, url, fileName, headers = {}):
 		while 1:
 			try:
-				ir = requests.get(url, headers = headers)
+				ir = PixivUtil.get(
+					PixivUtil.pixiv.getServer(), url, headers = headers)
 				break
 			except Exception, e:
 				continue

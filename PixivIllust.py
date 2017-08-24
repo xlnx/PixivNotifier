@@ -16,6 +16,7 @@ pixiv_rec = 'https://www.pixiv.net/recommended.php'
 pixiv_rec_get_list = 'https://www.pixiv.net/rpc/recommender.php?type=illust&sample_illusts=auto&num_recommendations=500&tt='
 pixiv_illust_query1 = 'https://www.pixiv.net/rpc/illust_list.php?illust_ids='
 pixiv_illust_query2 = '&verbosity=&exclude_muted_illusts=1&tt='
+purl = 'https://www.pixiv.net/member_illust.php?mode=medium&illust_id='
 
 class IlluThread(threading.Thread):
 	def __init__(self):
@@ -43,22 +44,33 @@ class IlluThread(threading.Thread):
 		pixiv_illust_query = pixiv_illust_query1 + str(iid) + pixiv_illust_query2 + self.post_key
 		while 1:
 			try:
-				j = json.loads(PixivUtil.get(self.ss, pixiv_illust_query, 
-					headers = PixivUtil.create_header(pixiv_rec)).text)
+				response = PixivUtil.get(self.ss, pixiv_illust_query, 
+					headers = PixivUtil.create_header(pixiv_rec)).text
+				j = json.loads(response)
 				data = j[0]
 				break
 			except Exception, e:
-				print j, iid
+				self.id += 1
+				return self.getImg()
 		ppage_html = PixivUtil.get(self.ss, purl + str(iid), headers = 
 			PixivUtil.create_header(PixivUtil.pixiv.return_to)).text
 		ppage = BeautifulSoup(ppage_html, 'lxml')
-		data['original-url'] = str(
-			re.findall(r'(https://i.pximg.net/img-original[^"]*)', ppage_html)[0])
+		try:
+			data['original-url'] = str(
+				re.findall(r'(https://i.pximg.net/img-original[^"]*)', ppage_html)[0])
+		except Exception, e:
+			s = re.findall(r'(https://i.pximg.net/)c/[^\/]+/(img-master[^"]*)', ppage_html)[0]
+			# print s
+			data['original-url'] = str(s[0]) + str(s[1])
+		img_url = None
 		for x in ppage.find_all('img'):
 			s = re.findall(r'alt="([^"]*)"', str(x))
 			if len(s) > 0 and unicode(s[0], 'utf-8') == data['illust_title']:
 				img_url = str(x['src'])
 				break
+		if img_url is None:
+			self.id += 1
+			return self.getImg()
 		icon = cache.image.get(str(img_url),#data['url']), 
 			headers = PixivUtil.create_header(PixivUtil.pixiv.return_to))
 		
@@ -83,5 +95,3 @@ class IlluThread(threading.Thread):
 
 	def getIllust(self, data):
 		self.query.append(data)
-
-purl = 'https://www.pixiv.net/member_illust.php?mode=medium&illust_id='

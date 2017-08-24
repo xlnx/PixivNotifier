@@ -3,7 +3,7 @@
 block_cipher = None
 
 
-a = Analysis(['pixivnotifier.pyw'],
+a = Analysis(['pixivNotifier.pyw'],
              pathex=['C:\\Users\\xlnx\\Desktop\\PixivNotifier'],
              binaries=[],
              datas=[],
@@ -21,7 +21,7 @@ exe = EXE(pyz,
           a.binaries,
           a.zipfiles,
           a.datas,
-          name='pixivnotifier',
+          name='pixivNotifier',
           debug=False,
           strip=False,
           upx=True,

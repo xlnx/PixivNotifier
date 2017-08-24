@@ -102,8 +102,8 @@ class CheckMessageThread(threading.Thread):
 class UserDataThread(threading.Thread):
 	def __init__(self):
 		super(UserDataThread, self).__init__()
-		self.ci = cache.imgCache('userData/' + PixivUtil.pixiv.user_id + '/')
-		self.di = cache.dataCache('userData/' + PixivUtil.pixiv.user_id + '/user_data.json')
+		self.ci = cache.imgCache('userData/' + PixivNotifier.window.pixiv_id + '/')
+		self.di = cache.dataCache('userData/' + PixivNotifier.window.pixiv_id + '/user_data.json')
 		
 	def updateUserProfile(self):
 		s = self.di.read([u'ニックネーム'], 'user_profile')
@@ -123,7 +123,13 @@ class UserDataThread(threading.Thread):
 	def pullUserData(self):
 		# pull user_page
 		ss = PixivUtil.pixiv.getServer()
-		sync.user_page_url = PixivUtil.pixiv.user_page_php
+		main_page_html = PixivUtil.get(ss, PixivUtil.pixiv.return_to, timeout = 5).text
+		main_page = BeautifulSoup(main_page_html, 'lxml')
+		# self.post_key = main_page.find('input', attrs = {'name': 'tt'})['value']
+		# self.notify_msg = self.notify_suffix + self.post_key
+		user_page_php = main_page.find('a', 
+			attrs = {'class': 'user-name js-click-trackable-later'})['href']
+		sync.user_page_url = PixivUtil.pixiv.return_to + user_page_php
 		sync.user_page_html = PixivUtil.get(ss, sync.user_page_url, 
 			headers = PixivUtil.create_header('http://www.pixiv.net')).text
 		sync.user_page = BeautifulSoup(sync.user_page_html, 'lxml')
@@ -159,7 +165,7 @@ class UserDataThread(threading.Thread):
 			headers = PixivUtil.create_header(sync.user_page_url)).text
 		sync.user_illust = BeautifulSoup(sync.user_illust_html, 'lxml')
 
-		ddi = cache.dataCache('userData/' + PixivUtil.pixiv.user_id + '/illust/data.json')
+		ddi = cache.dataCache('userData/' + PixivNotifier.window.pixiv_id + '/illust/data.json')
 		# print sync.user_illust_html
 		for x in sync.user_illust.find_all('li', attrs = {'class': 'image-item'}):
 			y = x.find('h1', attrs = {'class', 'title'})
@@ -186,10 +192,12 @@ class UserDataThread(threading.Thread):
 					if len(s) > 0 and unicode(s[0], 'utf-8') == value['title']:
 						img_url = str(x['src'])
 						break
+				if img_url is None:
+					continue
 				value['url'] = img_url
 				sync.user_illust_list.append(value)
 				ddi.write(value, str(value['id']))
-				cci = cache.imgCache('userData/' + PixivUtil.pixiv.user_id + '/illust/')
+				cci = cache.imgCache('userData/' + PixivNotifier.window.pixiv_id + '/illust/')
 				# if img_url is not None:
 				cci.get(img_url, headers = PixivUtil.create_header(value['page_url']), name = str(value['id']))
 
@@ -209,12 +217,19 @@ def init():
 	QtCore.QTextCodec.setCodecForLocale(QtCore.QTextCodec.codecForName("system"))
 
 	PixivNotifier.window = PixivNotifier.Window()
-	user = cache.config.read(('pixiv_id', 'password'))
-	if 'pixiv_id' in user and 'password' in user:
-		PixivNotifier.window.lePixivID.setText(user['pixiv_id'])
-		PixivNotifier.window.lePassword.setText(user['password'])
-		PixivNotifier.window.btnLogin.setFocus()
-		sync.login()
+	user = cache.config.read(['cookies', 'pixiv_id'])
+	# if 'pixiv_id' in user and 'password' in user:
+	if 'cookies' in user and 'pixiv_id' in user:
+		# PixivNotifier.window.lePixivID.setText(user['pixiv_id'])
+		# PixivNotifier.window.lePassword.setText(user['password'])
+		# PixivNotifier.window.btnLogin.setFocus()
+		# sync.login()
+		PixivUtil.se.cookies = requests.utils.cookiejar_from_dict(user['cookies'])
+		PixivNotifier.window.pixiv_id = str(user['pixiv_id'])
+		PixivNotifier.window.login_success()
+		PixivNotifier.window.lePixivID.setReadOnly(False)
+		PixivNotifier.window.lePassword.setReadOnly(False)
+		PixivNotifier.window.btnLogin.setEnabled(True)
 	else:
 		PixivNotifier.window.lePixivID.setFocus()
 	PixivNotifier.window.show()

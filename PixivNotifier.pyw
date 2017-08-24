@@ -5,6 +5,7 @@ import json
 import time
 import PixivUtil
 import systray_rc
+import requests
 import cache
 import MessageBox
 import IllustBox
@@ -112,8 +113,9 @@ class Window(QtGui.QMainWindow, WindowUI):
 		PixivSync.sync.beginCheckMsg(queryInterval)
 		self.illustBox.reset()
 		cache.config.write({
-			'pixiv_id': self.pixiv_id,
-			'password': self.password
+			'cookies': requests.utils.dict_from_cookiejar(PixivUtil.se.cookies),
+			'pixiv_id': self.pixiv_id
+			# 'password': self.password
 		})
 
 	def login_fail(self, result):
@@ -141,7 +143,8 @@ class Window(QtGui.QMainWindow, WindowUI):
 								unicode(details['content']['comment_count']) + u'条评论！',
 								cache.image.get(details['target']['url'])),
 					'favorited': lambda: (u'粉丝', 
-								(reduce(lambda x, y: unicode(x['name']) + u', ' + unicode(y['name']), details['users'])
+								(reduce(lambda x, y: unicode(x) + u', ' + unicode(y), 
+									[x['name'] for x in details['users']])
 								if len(details['users']) > 1 else unicode(details['users'][0]['name']))  + u'成为了你的粉丝！',
 								cache.image.get(details['users'][0]['url'], headers = PixivUtil.create_header(
 									PixivUtil.pixiv.return_to
