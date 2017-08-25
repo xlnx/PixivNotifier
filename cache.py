@@ -17,6 +17,7 @@ class imgCache:
 		self.setCacheDir(d)
 
 	def setCacheDir(self, dir):
+		# dir = PixivNotifier.path + '/' + dir
 		self.cacheDir = dir
 		if not os.path.isdir(dir):
 			os.mkdir(dir)
@@ -48,7 +49,7 @@ class imgCache:
 			fname = self.cacheDir + name + getFileExt(url)
 		if not os.path.isfile(fname):
 			self.downloadImg(url, fname, headers)
-		return PixivNotifier.path + '/' + fname
+		return fname
 
 	def update(self, url, name = None, headers = {}):
 		if name == None:
@@ -57,7 +58,7 @@ class imgCache:
 			fname = self.cacheDir + name + getFileExt(url)
 		# if not os.path.isfile(fname):
 		self.downloadImg(url, fname, headers)
-		return PixivNotifier.path + '/' + fname
+		return fname
 
 image = imgCache()
 
@@ -66,6 +67,7 @@ class dataCache:
 		self.setFileName(d)
 
 	def setFileName(self, s):
+		# s = PixivNotifier.path + '/' + s
 		self.fileName = s
 		d = getFileDir(s)
 		if not os.path.isdir(d):

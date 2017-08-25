@@ -10,6 +10,7 @@ import cache
 import MessageBox
 import IllustBox
 import os
+from PTime import getTime, genUnix
 
 window = None
 path = os.path.abspath(os.path.dirname(__file__) + os.path.sep)
@@ -27,7 +28,7 @@ class Window(QtGui.QMainWindow, WindowUI):
 		self.setupUi(self)
 
 		# set window attribute
-		self.setWindowFlags(QtCore.Qt.WindowTitleHint) 
+		self.setWindowFlags(QtCore.Qt.WindowMinimizeButtonHint|QtCore.Qt.WindowCloseButtonHint) 
 		self.setFixedSize(self.width(), self.height())
 		self.messageLookup = {}
 		self.privateLookup = {}
@@ -48,51 +49,11 @@ class Window(QtGui.QMainWindow, WindowUI):
 		self.connect(self, QtCore.SIGNAL('get-illust'), self.get_illust)
 		self.btnLogin.clicked.connect(PixivSync.sync.login)
 
-		#设置一个iconComboBox
-		self.iconComboBox = QtGui.QComboBox()
-		self.iconComboBox.addItem(
-			QtGui.QIcon('favicon.ico'), "Dmyz")
-#-------------------通知区域图标右键菜单start------------------
-		self.minimizeAction = QtGui.QAction(u"最小化", self,
-				triggered=self.hide)
-		self.restoreAction = QtGui.QAction(u"显示窗口", self,
-				triggered=self.showNormal)
-		self.quitAction = QtGui.QAction(u"退出", self,
-				triggered=QtGui.qApp.quit)
-		#弹出的菜单的行为，包括退出，还原，最小化
-		self.trayIconMenu = QtGui.QMenu(self)
-		self.trayIconMenu.addAction(self.restoreAction)
-		self.trayIconMenu.addAction(self.minimizeAction)
-		self.trayIconMenu.addAction(self.quitAction)
 		self.trayIcon = QtGui.QSystemTrayIcon(self)
-		self.trayIcon.setContextMenu(self.trayIconMenu)
-#-------------------通知区域图标右键菜单end------------------
-		#设置通知区域的ICON
-		self.iconComboBox.currentIndexChanged.connect(
-			self.setIcon)
-
-		#通知区域icon显示
-		self.iconComboBox.setCurrentIndex(1)
 		self.trayIcon.show()
-		self.trayIcon.activated.connect(
-			self.iconActivated)
 
 		# need login when form create
 		self.setLoginMode(True)
-
-	def iconActivated(self, reason):
-		if reason in (QtGui.QSystemTrayIcon.Trigger,
-					  QtGui.QSystemTrayIcon.DoubleClick):
-			self.showNormal()
-		elif reason == QtGui.QSystemTrayIcon.MiddleClick:
-			self.showMessage()
-
-	def setIcon(self, index):
-		icon = self.iconComboBox.itemIcon(0)
-		self.trayIcon.setIcon(icon)
-		self.setWindowIcon(icon)
-		self.trayIcon.setToolTip(
-			self.iconComboBox.itemText(index))
 
 	def showMessage(self, title, msg, icon = QtGui.QSystemTrayIcon.MessageIcon()):
 		self.trayIcon.showMessage(title, msg, icon, 1500)
@@ -186,17 +147,19 @@ class Window(QtGui.QMainWindow, WindowUI):
 						unread = True,
 						title = unicode(x['thread_name']),
 						content = unicode(x['latest_content']),
-						time = unicode(x['modified_at']),
+						time = unicode(genUnix(x['modified_at'])),
 						icon = cache.image.get(x['icon_url']['100x100'], 
 							headers = PixivUtil.create_header(
 								PixivUtil.pixiv.return_to
 							))
 					)
-				elif unicode(x['modified_at']) != unicode(self.privateLookup[id].time.text()):
+					self.privateLookup[id].timestamp = unicode(x['modified_at'])
+				elif unicode(x['modified_at']) != unicode(self.privateLookup[id].timestamp):
 					self.privateLookup[id].setAttribute(
 						content = unicode(x['latest_content']),
-						time = unicode(x['modified_at'])
+						time = unicode(genUnix(x['modified_at']))
 					)
+					self.privateLookup[id].timestamp = unicode(x['modified_at'])
 					self.showMessage(unicode(x['thread_name']) + (u'（' + unicode(x['unread_num']) + u'）' 
 						if int(x['unread_num']) > 1 else u''), unicode(x['latest_content']))
 			# ))
@@ -228,48 +191,6 @@ class Window(QtGui.QMainWindow, WindowUI):
 	def set_user_name(self, s):
 		self.userName.setText(s)
 		self.userNameShadow.setText(s)
-
-def getTime(s):
-	import win32timezone
-	import re
-
-	t = re.findall(r', (\S*) (\S*) [0-9]+ (.{2}).(.{2})[^\+-]*([\+-])([0-9]{2})(.*)', str(s))[0]
-	d = int(t[0])
-	m = t[1]
-	h = int(t[2])
-	mm = int(t[3])
-	f = t[4]
-	t5 = int(t[5]) if f == '+' else -int(t[5])
-	t6 = int(t[6]) if f == '+' else -int(t[6])
-	dt = re.findall(r'-([0-9]+)-([0-9]+)[^\+-]*([\+-])([0-9]+):([0-9]+)', str(win32timezone.now()))[0]
-	ym = int(dt[0])
-	yd = int(dt[1])
-	g = dt[2]
-	r5 = int(dt[3]) if g == '+' else -int(dt[3])
-	r6 = int(dt[4]) if g == '+' else -int(dt[4])
-	h -= t5 - r5
-	mm -= t6 - r6
-	if mm < 0:
-		h -= 1
-		mm += 60
-	elif mm >= 60:
-		h += 1
-		mm -= 60
-	if h > 23:
-		d += 1
-		h -= 24
-	elif h < 0:
-		d -= 1
-		h += 24
-	mstr = {
-		'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6, 
-		'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12
-	}
-	m = mstr[m]
-	if m == ym and d == yd:
-		return str(h).zfill(2) + ':' + str(mm).zfill(2)
-	else:
-		return str(m) + '/' + str(d)
 
 if __name__ == "__main__":
 	PixivSync.init()

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+import os
 import sys
 from bs4 import BeautifulSoup
 from PyQt4 import QtCore, QtGui, uic
@@ -211,7 +212,7 @@ class UserDataThread(threading.Thread):
 def init():
 	app = QtGui.QApplication(sys.argv)
 	# try:
-	QtGui.QApplication.setQuitOnLastWindowClosed(False)
+	# QtGui.QApplication.setQuitOnLastWindowClosed(False)
 	QtCore.QTextCodec.setCodecForTr(QtCore.QTextCodec.codecForName("system"))
 	QtCore.QTextCodec.setCodecForCStrings(QtCore.QTextCodec.codecForName("system"))
 	QtCore.QTextCodec.setCodecForLocale(QtCore.QTextCodec.codecForName("system"))
@@ -235,4 +236,4 @@ def init():
 	PixivNotifier.window.show()
 	# except Exception, e:
 		# print e.message
-	sys.exit(app.exec_())
+	os._exit(app.exec_())

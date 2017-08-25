@@ -4,6 +4,7 @@ from PyQt4 import QtCore, QtGui, uic
 import PixivUtil
 import threading
 import cache
+import IllustDialog
 
 BlkUI, QtBaseClass = uic.loadUiType("Block.ui")
 
@@ -16,14 +17,17 @@ class Block(QtGui.QWidget, BlkUI):
 		self.w = None
 		self.icon = None
 		self.original = None
+		self.is_bookmarked = None
 
 	def setAttribute(self, title = None, icon = None, url = None, data = None):
 		if title is not None:
+			self.title_ = unicode(title)
 			self.title.setText(unicode(title))
 		det = u''
 		if data is not None:
 			# print data
 			self.data = data
+			self.is_bookmarked = data['is_bookmarked']
 			# if star is not None:
 				# det += u'☆' + unicode(star)
 			# if post is not None:
@@ -51,8 +55,10 @@ class Block(QtGui.QWidget, BlkUI):
 	def mousePressEvent(self, e):
 		if self.url is not None:
 			if self.w is None:
-				self.w = QtGui.QLabel()
-				self.w.setGeometry(100, 100, 100, 100)
+				self.w = IllustDialog.IllustDialog(
+					self.title_, str(self.data['illust_id']), self.url,
+					bookmark = self.is_bookmarked) #QtGui.QLabel()
+				# self.w.setGeometry(100, 100, 100, 100)
 				self.beginFetchImg()
 			self.w.show()
 
@@ -62,9 +68,9 @@ class Block(QtGui.QWidget, BlkUI):
 
 	def endFetchImg(self, img_name):
 		self.original = QtGui.QPixmap(img_name)
-		self.w.setPixmap(self.original)
-		self.w.setGeometry(self.w.geometry().x(), self.w.geometry().y(), 
-			self.original.width(), self.original.height())
+		self.w.setImage(self.original) #setPixmap(self.original)
+		# self.w.setGeometry(self.w.geometry().x(), self.w.geometry().y(), 
+			# self.original.width(), self.original.height())
 
 class MyIllustThread(threading.Thread):
 	def __init__(self, object):
