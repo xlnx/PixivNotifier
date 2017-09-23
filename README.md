@@ -1,0 +1,1 @@
+Maybe you will have to configure the second argumet of <BeautifulSoup> function due to the difference in library versions.
